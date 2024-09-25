@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgd.mapper.SysMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.hgd.pojo.SysMenu">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="isFrame" column="is_frame" jdbcType="INTEGER"/>
+            <result property="menuType" column="menu_type" jdbcType="CHAR"/>
+            <result property="visible" column="visible" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="perms" column="perms" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="delFlag" column="del_flag" jdbcType="CHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,menu_name,parent_id,
+        order_num,path,component,
+        is_frame,menu_type,visible,
+        status,perms,icon,
+        create_by,create_time,update_by,
+        update_time,remark,del_flag
+    </sql>
+
+    <select id="getPermsByUserId" resultType="string">
+        select sm.perms smPerms
+        from sys_user_role sur
+            join sys_role sr
+            join sys_role_menu srm
+            join sys_menu sm on
+            sur.role_id = sr.id and sr.id = srm.role_id and srm.menu_id = sm.id
+        where sur.user_id = #{userId}
+    </select>
+
+    <resultMap id="getMenusByUserIdResultMap" type="com.hgd.vo.MenuVo">
+        <id property="id" column="smId"/>
+        <result property="createTime" column="smCreateTime"/>
+        <result property="component" column="smComponent"/>
+        <result property="icon" column="smIcon"/>
+        <result property="id" column="smId"/>
+        <result property="menuName" column="smMenuName"/>
+        <result property="menuType" column="smMenuType"/>
+        <result property="orderNum" column="smOrderNum"/>
+        <result property="parentId" column="smParentId"/>
+        <result property="path" column="smPath"/>
+        <result property="perms" column="smPerms"/>
+        <result property="status" column="smStatus"/>
+        <result property="visible" column="smVisible"/>
+
+    </resultMap>
+
+    <select id="getMenusByUserId" resultMap="getMenusByUserIdResultMap">
+        select sm.component smComponent,
+               sm.create_time smCreateTime,
+               sm.icon smIcon,
+               sm.id smId,
+               sm.menu_name smMenuName,
+               sm.menu_type smMenuType,
+               sm.order_num smOrderNum,
+               sm.parent_id smParentId,
+               sm.path smPath,
+               sm.perms smPerms,
+               sm.status smStatus,
+               sm.visible smVisible
+        from sys_user_role sur
+        join sys_role sr join sys_role_menu srm join sys_menu sm
+        on sur.role_id=sr.id and sr.id=srm.role_id and srm.menu_id = sm.id
+        where sur.user_id=#{userId}
+        and sm.menu_type in ('C','M')
+        and sm.status =0
+        and sm.del_flag =0
+    </select>
+    <select id="getMenusAll" resultMap="getMenusByUserIdResultMap">
+        select sm.component smComponent,
+               sm.create_time smCreateTime,
+               sm.icon smIcon,
+               sm.id smId,
+               sm.menu_name smMenuName,
+               sm.menu_type smMenuType,
+               sm.order_num smOrderNum,
+               sm.parent_id smParentId,
+               sm.path smPath,
+               sm.perms smPerms,
+               sm.status smStatus,
+               sm.visible smVisible
+        from  sys_menu sm
+        where sm.menu_type in ('C','M')
+          and sm.status =0
+          and sm.del_flag =0
+    </select>
+
+    <select id="getPermsAll" resultType="string">
+        select sm.perms smPerms
+        from sys_menu sm
+        where sm.menu_type in ('C','M')
+          and sm.status =0
+          and sm.del_flag =0
+    </select>
+
+</mapper>

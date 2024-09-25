@@ -1,0 +1,25 @@
+server:
+  port: 8989
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog?serverTimezone=Asia/Shanghai
+    username: root
+    password: ''
+  redis:
+    host: localhost
+    port: 6379
+    password: ''
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+accessKey: ""
+secretKey: ""
+bucket: ""
+qiniuurl: ""
